@@ -6,4 +6,5 @@ import com.example.fashionshop.dto.RegisterRequest;
 public interface UserService {
     String register(RegisterRequest request);
     Object login(LoginRequest request);
+    boolean changePassword(Long userId, String oldPassword, String newPassword);
 }

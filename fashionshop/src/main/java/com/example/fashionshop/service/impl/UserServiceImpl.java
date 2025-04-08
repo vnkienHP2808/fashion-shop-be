@@ -51,4 +51,19 @@ public class UserServiceImpl implements UserService {
             return "Tài khoản không tồn tại!";
         }
     }
+
+    @Override
+public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+    Optional<User> optionalUser = userRepository.findById(userId);
+    if (optionalUser.isPresent()) {
+        User user = optionalUser.get();
+        if (user.getPassword().equals(oldPassword)) { 
+            user.setPassword(newPassword); 
+            userRepository.save(user);
+            return true;
+        }
+    }
+    return false;
+}
+
 }

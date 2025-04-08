@@ -1,5 +1,6 @@
 package com.example.fashionshop.controller;
 
+import com.example.fashionshop.dto.ChangePasswordRequest;
 import com.example.fashionshop.dto.LoginRequest;
 import com.example.fashionshop.dto.RegisterRequest;
 import com.example.fashionshop.service.UserService;
@@ -29,4 +30,19 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        boolean success = userService.changePassword(
+                request.getUserId(),
+                request.getOldPassword(),
+                request.getNewPassword());
+
+        if (success) {
+            return ResponseEntity.ok("Đổi mật khẩu thành công");
+        } else {
+            return ResponseEntity.badRequest().body("Mật khẩu cũ không đúng!");
+        }
+    }
+
 }
