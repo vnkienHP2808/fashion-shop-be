@@ -23,12 +23,12 @@ public class User {
     private String role;
 
     @ElementCollection
-    @CollectionTable(name = "user_phones", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_phones", joinColumns = @JoinColumn(name = "id_user"))
     @Column(name = "phone")
     private List<String> phones;
 
     @ElementCollection
-    @CollectionTable(name = "user_addresses", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_addresses", joinColumns = @JoinColumn(name = "id_user"))
     @Column(name = "address")
     private List<String> addresses;
 }
