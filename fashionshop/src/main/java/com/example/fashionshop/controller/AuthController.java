@@ -2,6 +2,8 @@ package com.example.fashionshop.controller;
 
 import com.example.fashionshop.dto.RegisterRequest;
 import com.example.fashionshop.service.UserService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +16,8 @@ public class AuthController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    @PostMapping("/sign-up")
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
         String message = userService.register(request);
         return ResponseEntity.ok(message);
     }
