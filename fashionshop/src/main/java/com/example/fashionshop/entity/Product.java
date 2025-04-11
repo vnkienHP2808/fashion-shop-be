@@ -32,8 +32,10 @@ public class Product {
 
 
     private String name_product;
-    private Long id_cat;
-    private Long id_subcat;
+    @Column(name = "id_cat")
+    private Long idCat;
+    @Column(name = "id_subcat")
+    private Long idSubcat;
     private Boolean is_new;
     private Boolean is_sale;
     private Integer price;

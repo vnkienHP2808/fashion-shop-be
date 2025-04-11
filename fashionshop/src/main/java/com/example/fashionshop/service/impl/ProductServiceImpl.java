@@ -39,4 +39,15 @@ public class ProductServiceImpl implements ProductService {
 
         return product;
     }
+
+    @Override
+    public List<Product> getProductsByCategory(Long idCat) {
+        return productRepository.findByIdCat(idCat);
+    }
+
+    @Override
+    public List<Product> getProductsByCategoryAndSubcategory(Long idCat, Long idSubcat) {
+        return productRepository.findByIdCatAndIdSubcat(idCat, idSubcat);
+    }
+
 }
