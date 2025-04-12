@@ -42,4 +42,4 @@ public class ProductController {
             @PathVariable("id_subcat") Long id_subcat) {
         return ResponseEntity.ok(productService.getProductsByCategoryAndSubcategory(id_cat, id_subcat));
     }
-}
+} 

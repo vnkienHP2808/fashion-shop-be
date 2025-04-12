@@ -17,7 +17,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cat") 
-    private Long id;          
+    private Long id;
 
     @Column(name = "name_cat")
     private String name;
@@ -28,7 +28,6 @@ public class Category {
     private String imageLink;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "category-subcategory")
     private List<SubCategory> subCategories;
-;
 }

@@ -2,6 +2,8 @@ package com.example.fashionshop.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,9 +14,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_user")
     private Long id_user;
+
 
     private String name;
     private String email;
@@ -31,4 +36,12 @@ public class User {
     @CollectionTable(name = "user_addresses", joinColumns = @JoinColumn(name = "id_user"))
     @Column(name = "address")
     private List<String> addresses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "user-orders")
+    private List<Order> orders;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "user-cart")
+    private Cart cart;
 }

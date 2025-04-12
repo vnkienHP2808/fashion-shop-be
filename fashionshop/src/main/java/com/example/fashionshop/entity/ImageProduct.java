@@ -20,9 +20,9 @@ public class ImageProduct {
     @Column(name = "image_link")
     private String imageLink;
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_product")
-    @JsonBackReference
+     @JsonBackReference(value = "product-images")
     private Product product;
+
 }

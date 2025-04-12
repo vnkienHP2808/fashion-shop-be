@@ -6,6 +6,8 @@ import com.example.fashionshop.entity.User;
 import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.UserService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -53,17 +55,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-public boolean changePassword(Long userId, String oldPassword, String newPassword) {
-    Optional<User> optionalUser = userRepository.findById(userId);
-    if (optionalUser.isPresent()) {
-        User user = optionalUser.get();
-        if (user.getPassword().equals(oldPassword)) { 
-            user.setPassword(newPassword); 
-            userRepository.save(user);
-            return true;
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getPassword().equals(oldPassword)) { 
+                user.setPassword(newPassword); 
+                userRepository.save(user);
+                return true;
+            }
         }
+        return false;
     }
-    return false;
-}
 
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public User updateUser(Long id, User updatedUser) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setAddresses(updatedUser.getAddresses());
+        user.setPhones(updatedUser.getPhones());
+        return userRepository.save(user);
+    }
+
+
+    // lấy danh sách người dùng để check postman
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
 }
