@@ -1,6 +1,7 @@
 package com.example.fashionshop.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,39 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProductsByCategoryAndSubcategory(Long idCat, Long idSubcat) {
         return productRepository.findByIdCatAndIdSubcat(idCat, idSubcat);
+    }
+
+    @Override
+    public Product createProduct(Product productRequest) {
+        // Lưu product trước (tạm thời chưa có ảnh)
+        Product savedProduct = productRepository.save(Product.builder()
+            .name_product(productRequest.getName_product())
+            .price(productRequest.getPrice())
+            .sale_price(productRequest.getSale_price())
+            .is_new(productRequest.getIs_new())
+            .is_sale(productRequest.getIs_sale())
+            .occasion(productRequest.getOccasion())
+            .sold_quantity(productRequest.getSold_quantity())
+            .in_stock(productRequest.getIn_stock())
+            .status(productRequest.getStatus())
+            .idCat(productRequest.getIdCat())
+            .idSubcat(productRequest.getIdSubcat())
+            .build()
+        );
+
+        // Nếu có danh sách images truyền vào thì tạo entity ImageProduct
+        if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
+            List<ImageProduct> imageEntities = productRequest.getImages().stream()
+                .map(image -> ImageProduct.builder()
+                    .imageLink(image.getImageLink())  // hoặc nếu là List<String> thì dùng .map(url -> new ImageProduct(...))
+                    .product(savedProduct)
+                    .build())
+                .collect(Collectors.toList());
+
+            savedProduct.setImages(imageProductRepository.saveAll(imageEntities));
+        }
+
+        return savedProduct;
     }
 
 }

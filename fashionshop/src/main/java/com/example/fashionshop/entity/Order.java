@@ -52,4 +52,3 @@ public class Order {
     private List<OrderDetail> orderDetails;
 
 }
-

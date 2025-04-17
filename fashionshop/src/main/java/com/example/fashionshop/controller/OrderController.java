@@ -1,5 +1,8 @@
+
+
 package com.example.fashionshop.controller;
 
+import com.example.fashionshop.dto.OrderDTO;
 import com.example.fashionshop.entity.Order;
 import com.example.fashionshop.entity.OrderDetail;
 import com.example.fashionshop.entity.Product;
@@ -7,6 +10,7 @@ import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.OrderService;
 import com.example.fashionshop.service.UserService;
 import com.example.fashionshop.repository.ProductRepository;
+import com.example.fashionshop.util.DTOMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,46 +31,62 @@ public class OrderController {
     @Autowired
     private ProductRepository productRepository;
 
+    
+
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
-        // Tìm và gán lại user
-        User user = userService.getUserById(order.getUser().getId_user());
+    public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
+        // Lấy user từ id_user trong OrderDTO
+        User user = userService.getUserById(orderDTO.getId_user());
+
+        Order order = new Order();
         order.setUser(user);
+        order.setStatus(orderDTO.getStatus());
+        order.setAddress(orderDTO.getAddress());
+        order.setPhoneNumber(orderDTO.getPhoneNumber());
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setShippingFee(orderDTO.getShippingFee());
+        order.setGrandTotal(orderDTO.getGrandTotal());
 
-        // Thiết lập lại liên kết giữa OrderDetail và Order, cũng như gán Product thực
-        for (OrderDetail detail : order.getOrderDetails()) {
-            Product product = productRepository.findById(detail.getProduct().getIdProduct())
-                                               .orElseThrow(() -> new RuntimeException("Product not found"));
+        List<OrderDetail> details = orderDTO.getOrderDetails().stream().map(detailDTO -> {
+            OrderDetail detail = new OrderDetail();
+            Product product = productRepository.findById(detailDTO.getProduct().getIdProduct())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
             detail.setProduct(product);
+            detail.setQuantity(detailDTO.getQuantity());
+            detail.setTotalAmount(detailDTO.getTotalAmount());
             detail.setOrder(order);
-        }
+            return detail;
+        }).toList();
 
-        return orderService.saveOrder(order);
+        order.setOrderDetails(details);
+
+        Order savedOrder = orderService.saveOrder(order);
+        return DTOMapper.toOrderDTO(savedOrder);
     }
 
+
+
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public List<OrderDTO> getAllOrders() {
+        List<Order> orders = orderService.getAllOrders();
+        return DTOMapper.toOrderDTOList(orders);
     }
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Integer id) {
-        return orderService.getOrderById(id);
+    public OrderDTO getOrderById(@PathVariable Integer id) {
+        Order order = orderService.getOrderById(id);
+        return DTOMapper.toOrderDTO(order);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Order> getOrdersByUserId(@PathVariable Long userId) {
-        return orderService.getOrdersByUserId(userId);
+    public List<OrderDTO> getOrdersByUserId(@PathVariable Long userId) {
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        return DTOMapper.toOrderDTOList(orders);
     }
 
     @PutMapping("/{id}/status")
-    public Order updateOrderStatus(@PathVariable Integer id, @RequestBody String status) {
-        return orderService.updateOrderStatus(id, status);
+    public OrderDTO updateOrderStatus(@PathVariable Integer id, @RequestBody String status) {
+        Order order = orderService.updateOrderStatus(id, status);
+        return DTOMapper.toOrderDTO(order);
     }
-
-    @GetMapping("/user/{id}")
-    public List<Order> getOrdersByUser(@PathVariable Long id) {
-        return orderService.getOrdersByUserId(id);
-    }
-
 }

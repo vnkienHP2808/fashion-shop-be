@@ -1,3 +1,5 @@
+
+
 package com.example.fashionshop.controller;
 
 import java.util.List;
@@ -9,9 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.fashionshop.dto.CategoryDTO;
+import com.example.fashionshop.dto.SubCategoryDTO;
+import com.example.fashionshop.entity.Category;
 import com.example.fashionshop.entity.SubCategory;
 import com.example.fashionshop.service.CategoryService;
 import com.example.fashionshop.service.SubCategoryService;
+import com.example.fashionshop.util.DTOMapper;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -24,12 +30,14 @@ public class CategoryController {
     private SubCategoryService subCategoryService;
 
     @GetMapping
-    public List<com.example.fashionshop.entity.Category> getAllCategories() {
-        return categoryService.getAllCategories();
+    public List<CategoryDTO> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
+        return DTOMapper.toCategoryDTOList(categories);
     }
 
     @GetMapping("/{categoryId}/subcategories")
-    public List<SubCategory> getSubcategoriesByCategoryId(@PathVariable Long categoryId) {
-        return subCategoryService.getSubCategoriesByCategoryId(categoryId);
+    public List<SubCategoryDTO> getSubcategoriesByCategoryId(@PathVariable Long categoryId) {
+        List<SubCategory> subCategories = subCategoryService.getSubCategoriesByCategoryId(categoryId);
+        return DTOMapper.toSubCategoryDTOList(subCategories);
     }
 }

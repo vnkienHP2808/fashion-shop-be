@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getPassword().equals(request.getPassword())) {
-                return user; // hoặc trả về DTO nếu không muốn trả hết thông tin
+                return user; 
             } else {
                 return "Sai mật khẩu!";
             }
@@ -91,4 +91,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
     
+    @Override
+public void updatePhones(Long id, List<String> phones) {
+    User user = userRepository.findById(id).orElseThrow();
+    user.setPhones(phones);
+    userRepository.save(user);
+}
+
+@Override
+public void updateAddresses(Long id, List<String> addresses) {
+    User user = userRepository.findById(id).orElseThrow();
+    user.setAddresses(addresses);
+    userRepository.save(user);
+}
+
 }

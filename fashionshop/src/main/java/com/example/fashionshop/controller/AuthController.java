@@ -1,16 +1,20 @@
+
+
 package com.example.fashionshop.controller;
 
 import com.example.fashionshop.dto.ChangePasswordRequest;
 import com.example.fashionshop.dto.LoginRequest;
+import com.example.fashionshop.dto.LoginResponseDTO;
 import com.example.fashionshop.dto.RegisterRequest;
+import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.UserService;
+import com.example.fashionshop.util.DTOMapper;
 
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/auth")
@@ -28,8 +32,15 @@ public class AuthController {
     
     @PostMapping("/sign-in")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(userService.login(request));
+        Object loginResult = userService.login(request);
+        
+        if (loginResult instanceof User) {
+            return ResponseEntity.ok(DTOMapper.toLoginResponseDTO((User) loginResult));
+        } else {
+            return ResponseEntity.badRequest().body(loginResult);
+        }
     }
+    
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
@@ -44,5 +55,4 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Mật khẩu cũ không đúng!");
         }
     }
-
 }

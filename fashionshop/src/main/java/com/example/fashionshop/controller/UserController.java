@@ -1,6 +1,9 @@
+
+
 package com.example.fashionshop.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.fashionshop.dto.UserDTO;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.UserService;
+import com.example.fashionshop.util.DTOMapper;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,18 +28,36 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(DTOMapper.toUserDTO(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody User updatedUser) {
-        return ResponseEntity.ok(userService.updateUser(id, updatedUser));
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody User updatedUser) {
+        User user = userService.updateUser(id, updatedUser);
+        return ResponseEntity.ok(DTOMapper.toUserDTO(user));
     }
 
     // lấy danh sách người dùng để check postman
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(DTOMapper.toUserDTOList(users));
     }
+
+    @PutMapping("/{id}/phones")
+public ResponseEntity<?> updatePhones(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+    List<String> phones = payload.get("phones");
+    userService.updatePhones(id, phones);
+    return ResponseEntity.ok().build();
+}
+
+@PutMapping("/{id}/addresses")
+public ResponseEntity<?> updateAddresses(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+    List<String> addresses = payload.get("addresses");
+    userService.updateAddresses(id, addresses);
+    return ResponseEntity.ok().build();
+}
+
 }

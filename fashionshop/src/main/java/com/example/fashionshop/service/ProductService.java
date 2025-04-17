@@ -11,4 +11,6 @@ public interface ProductService {
     List<Product> getProductsByCategory(Long id_cat);
     List<Product> getProductsByCategoryAndSubcategory(Long id_cat, Long id_subcat);
 
+    Product createProduct(Product product);
+
 }

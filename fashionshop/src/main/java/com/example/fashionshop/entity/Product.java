@@ -39,11 +39,11 @@ public class Product {
     private String status;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "product-images")
+    // @JsonManagedReference(value = "product-images")
     private List<ImageProduct> images;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @JsonManagedReference(value = "product-orderDetails")
+    @JsonManagedReference(value = "product-orderDetails")
     private List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
