@@ -1,6 +1,5 @@
 package com.example.fashionshop.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +21,6 @@ public class ImageProduct {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_product")
-     @JsonBackReference(value = "product-images")
     private Product product;
 
 }

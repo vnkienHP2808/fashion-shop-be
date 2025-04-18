@@ -1,6 +1,5 @@
 package com.example.fashionshop.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +19,5 @@ public class SubCategory {
 
     @ManyToOne
     @JoinColumn(name = "id_cat", nullable = false)
-    @JsonBackReference(value = "category-subcategory") 
     private Category category;
 }

@@ -23,14 +23,14 @@ public class UserServiceImpl implements UserService {
             return "Email đã tồn tại!";
         }
 
-        //lưu thông tin người dùng vào cơ sở dữ liệu
+        // lưu thông tin người dùng vào cơ sở dữ liệu
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .status("Active")
                 .role("Customer")
-                .phones(request.getPhones())         
+                .phones(request.getPhones())
                 .addresses(request.getAddresses())
                 .build();
         userRepository.save(user);
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getPassword().equals(request.getPassword())) {
-                return user; 
+                return user;
             } else {
                 return "Sai mật khẩu!";
             }
@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if (user.getPassword().equals(oldPassword)) { 
-                user.setPassword(newPassword); 
+            if (user.getPassword().equals(oldPassword)) {
+                user.setPassword(newPassword);
                 userRepository.save(user);
                 return true;
             }
@@ -84,25 +84,37 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
     // lấy danh sách người dùng để check postman
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    
-    @Override
-public void updatePhones(Long id, List<String> phones) {
-    User user = userRepository.findById(id).orElseThrow();
-    user.setPhones(phones);
-    userRepository.save(user);
-}
 
-@Override
-public void updateAddresses(Long id, List<String> addresses) {
-    User user = userRepository.findById(id).orElseThrow();
-    user.setAddresses(addresses);
-    userRepository.save(user);
-}
+    @Override
+    public void updatePhones(Long id, List<String> phones) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setPhones(phones);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateAddresses(Long id, List<String> addresses) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setAddresses(addresses);
+        userRepository.save(user);
+    }
+
+    @Override
+    public User updateUserStatus(Long id, String status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        if ("Admin".equalsIgnoreCase(user.getRole()) && "Inactive".equalsIgnoreCase(status)) {
+            throw new IllegalArgumentException("Admin không thể bị hủy kích hoạt.");
+        }
+
+        user.setStatus(status);
+        return userRepository.save(user);
+    }
 
 }

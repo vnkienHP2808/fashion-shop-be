@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "category")
@@ -28,6 +27,5 @@ public class Category {
     private String imageLink;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "category-subcategory")
     private List<SubCategory> subCategories;
 }

@@ -2,7 +2,6 @@ package com.example.fashionshop.entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,10 +37,8 @@ public class User {
     private List<String> addresses;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "user-orders")
     private List<Order> orders;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "user-cart")
     private Cart cart;
 }

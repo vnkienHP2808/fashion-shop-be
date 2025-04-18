@@ -5,8 +5,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "`order`") 
@@ -22,7 +20,6 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    @JsonBackReference(value = "user-orders")
     private User user;
 
 
@@ -48,7 +45,6 @@ public class Order {
     private Integer grandTotal;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-     @JsonManagedReference(value = "order-orderDetails")
     private List<OrderDetail> orderDetails;
 
 }

@@ -1,6 +1,5 @@
 package com.example.fashionshop.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,13 +16,11 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "id_order", nullable = false)
-     @JsonBackReference(value = "order-orderDetails")
     private Order order;
 
 
     @ManyToOne
     @JoinColumn(name = "id_product", nullable = false)
-    // @JsonBackReference(value = "product-orderDetails")
     private Product product;
 
 

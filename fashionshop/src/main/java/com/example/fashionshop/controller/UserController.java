@@ -1,5 +1,4 @@
 
-
 package com.example.fashionshop.controller;
 
 import java.util.List;
@@ -47,17 +46,25 @@ public class UserController {
     }
 
     @PutMapping("/{id}/phones")
-public ResponseEntity<?> updatePhones(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
-    List<String> phones = payload.get("phones");
-    userService.updatePhones(id, phones);
-    return ResponseEntity.ok().build();
-}
+    public ResponseEntity<?> updatePhones(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+        List<String> phones = payload.get("phones");
+        userService.updatePhones(id, phones);
+        return ResponseEntity.ok().build();
+    }
 
-@PutMapping("/{id}/addresses")
-public ResponseEntity<?> updateAddresses(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
-    List<String> addresses = payload.get("addresses");
-    userService.updateAddresses(id, addresses);
-    return ResponseEntity.ok().build();
-}
+    @PutMapping("/{id}/addresses")
+    public ResponseEntity<?> updateAddresses(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+        List<String> addresses = payload.get("addresses");
+        userService.updateAddresses(id, addresses);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<UserDTO> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        String status = payload.get("status");
+
+        User updatedUser = userService.updateUserStatus(id, status);
+        return ResponseEntity.ok(DTOMapper.toUserDTO(updatedUser));
+    }
 
 }

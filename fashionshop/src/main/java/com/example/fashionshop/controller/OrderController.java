@@ -84,8 +84,9 @@ public class OrderController {
         return DTOMapper.toOrderDTOList(orders);
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}")
     public OrderDTO updateOrderStatus(@PathVariable Integer id, @RequestBody String status) {
+        status = status.replace("\"", "");
         Order order = orderService.updateOrderStatus(id, status);
         return DTOMapper.toOrderDTO(order);
     }
