@@ -35,9 +35,9 @@ public class CategoryController {
         return DTOMapper.toCategoryDTOList(categories);
     }
 
-    @GetMapping("/{categoryId}/subcategories")
-    public List<SubCategoryDTO> getSubcategoriesByCategoryId(@PathVariable Long categoryId) {
-        List<SubCategory> subCategories = subCategoryService.getSubCategoriesByCategoryId(categoryId);
-        return DTOMapper.toSubCategoryDTOList(subCategories);
-    }
+    // @GetMapping("/{categoryId}/subcategories")
+    // public List<SubCategoryDTO> getSubcategoriesByCategoryId(@PathVariable Long categoryId) {
+    //     List<SubCategory> subCategories = subCategoryService.getSubCategoriesByCategoryId(categoryId);
+    //     return DTOMapper.toSubCategoryDTOList(subCategories);
+    // }
 }

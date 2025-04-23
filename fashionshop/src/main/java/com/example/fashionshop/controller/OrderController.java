@@ -72,11 +72,11 @@ public class OrderController {
         return DTOMapper.toOrderDTOList(orders);
     }
 
-    @GetMapping("/{id}")
-    public OrderDTO getOrderById(@PathVariable Integer id) {
-        Order order = orderService.getOrderById(id);
-        return DTOMapper.toOrderDTO(order);
-    }
+    // @GetMapping("/{id}")
+    // public OrderDTO getOrderById(@PathVariable Integer id) {
+    //     Order order = orderService.getOrderById(id);
+    //     return DTOMapper.toOrderDTO(order);
+    // }
 
     @GetMapping("/user/{userId}")
     public List<OrderDTO> getOrdersByUserId(@PathVariable Long userId) {

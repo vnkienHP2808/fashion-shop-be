@@ -32,11 +32,11 @@ public class UserController {
         return ResponseEntity.ok(DTOMapper.toUserDTO(user));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody User updatedUser) {
-        User user = userService.updateUser(id, updatedUser);
-        return ResponseEntity.ok(DTOMapper.toUserDTO(user));
-    }
+    // @PutMapping("/{id}")
+    // public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody User updatedUser) {
+    //     User user = userService.updateUser(id, updatedUser);
+    //     return ResponseEntity.ok(DTOMapper.toUserDTO(user));
+    // }
 
     // lấy danh sách người dùng để check postman
     @GetMapping
@@ -58,7 +58,7 @@ public class UserController {
         userService.updateAddresses(id, addresses);
         return ResponseEntity.ok().build();
     }
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @PutMapping("/{id}/status")
     public ResponseEntity<UserDTO> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         String status = payload.get("status");
