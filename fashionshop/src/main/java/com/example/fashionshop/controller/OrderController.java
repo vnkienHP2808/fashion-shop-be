@@ -13,6 +13,8 @@ import com.example.fashionshop.repository.ProductRepository;
 import com.example.fashionshop.util.DTOMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,24 +66,19 @@ public class OrderController {
         return DTOMapper.toOrderDTO(savedOrder);
     }
 
-
-
-    @GetMapping
-    public List<OrderDTO> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        return DTOMapper.toOrderDTOList(orders);
-    }
-
-    // @GetMapping("/{id}")
-    // public OrderDTO getOrderById(@PathVariable Integer id) {
-    //     Order order = orderService.getOrderById(id);
-    //     return DTOMapper.toOrderDTO(order);
-    // }
-
     @GetMapping("/user/{userId}")
     public List<OrderDTO> getOrdersByUserId(@PathVariable Long userId) {
         List<Order> orders = orderService.getOrdersByUserId(userId);
         return DTOMapper.toOrderDTOList(orders);
+    }
+//~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~
+    @GetMapping
+    public ResponseEntity<Page<OrderDTO>> getAllOrders(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<Order> orderPage = orderService.getAllOrders(page, size);
+        Page<OrderDTO> orderDTOPage = orderPage.map(DTOMapper::toOrderDTO);
+        return ResponseEntity.ok(orderDTOPage);
     }
 
     @PutMapping("/{id}")

@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -84,12 +88,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // lấy danh sách người dùng để check postman
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
     @Override
     public void updatePhones(Long id, List<String> phones) {
         User user = userRepository.findById(id).orElseThrow();
@@ -102,6 +100,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow();
         user.setAddresses(addresses);
         userRepository.save(user);
+    }
+//~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public Page<User> getUsersByName(String name, int page, int size){
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<User> userPage = userRepository.findUsersByName(name, pageable);
+        return userPage;
     }
 
     @Override

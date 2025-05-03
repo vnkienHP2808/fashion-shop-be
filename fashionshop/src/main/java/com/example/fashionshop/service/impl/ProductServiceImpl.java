@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.fashionshop.entity.Product;
@@ -20,14 +23,65 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImageProductRepository imageProductRepository;
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~User~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
-    public List<Product> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        products.forEach(p -> {
-            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct()); 
+    public Page<Product> getAllProducts(int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.findByFilters(idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
             p.setImages(images);
         });
-        return products;
+        return productPage;
+    }
+
+    @Override
+    public Page<Product> getNewProducts(int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.findNewByFilters(idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
+            p.setImages(images);
+        });
+        return productPage;
+    }
+
+    @Override
+    public Page<Product> getSaleProducts(int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.findSaleByFilters(idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
+            p.setImages(images);
+        });
+        return productPage;
     }
 
     @Override
@@ -42,15 +96,45 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategory(Long idCat) {
-        return productRepository.findByIdCat(idCat);
+    public Page<Product> getProductsByCategory(Long id_cat, int page, int size, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.findByIdCatWithFilters(id_cat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
+            p.setImages(images);
+        });
+        return productPage;
     }
 
     @Override
-    public List<Product> getProductsByCategoryAndSubcategory(Long idCat, Long idSubcat) {
-        return productRepository.findByIdCatAndIdSubcat(idCat, idSubcat);
-    }
+    public Page<Product> getProductsByCategoryAndSubcategory(Long id_cat, Long id_subcat, int page, int size, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
 
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.findByIdCatAndIdSubcatWithFilters(id_cat, id_subcat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
+            p.setImages(images);
+        });
+        return productPage;
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Product createProduct(Product productRequest) {
         Product savedProduct = productRepository.save(Product.builder()

@@ -1,13 +1,13 @@
 package com.example.fashionshop.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.fashionshop.dto.ProductDTO;
@@ -27,11 +27,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductController {
     @Autowired
     private ProductService productService;
-    
+
+//~~~~~~~~~~~~~~~~~~~~User~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(DTOMapper.toProductDTOList(products));
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) Long idCat,
+            @RequestParam(required = false) Long idSubcat,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getAllProducts(page, size, idCat, idSubcat, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return ResponseEntity.ok(productDTOPage);
+    }
+
+    @GetMapping("/new")
+    public ResponseEntity<Page<ProductDTO>> getNewProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) Long idCat,
+            @RequestParam(required = false) Long idSubcat,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getNewProducts(page, size, idCat, idSubcat, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return ResponseEntity.ok(productDTOPage);
+    }
+
+    @GetMapping("/sale")
+    public ResponseEntity<Page<ProductDTO>> getSaleProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) Long idCat,
+            @RequestParam(required = false) Long idSubcat,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getSaleProducts(page, size, idCat, idSubcat, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/{id_product}")
@@ -41,19 +76,31 @@ public class ProductController {
     }
     
     @GetMapping("/category/{id_cat}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable("id_cat") Long id_cat) {
-        List<Product> products = productService.getProductsByCategory(id_cat);
-        return ResponseEntity.ok(DTOMapper.toProductDTOList(products));
+    public ResponseEntity<Page<ProductDTO>> getProductsByCategory(
+            @PathVariable("id_cat") Long id_cat,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getProductsByCategory(id_cat, page, size, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/category/{id_cat}/subcategory/{id_subcat}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategoryAndSubcategory(
+    public ResponseEntity<Page<ProductDTO>> getProductsByCategoryAndSubcategory(
             @PathVariable("id_cat") Long id_cat,
-            @PathVariable("id_subcat") Long id_subcat) {
-        List<Product> products = productService.getProductsByCategoryAndSubcategory(id_cat, id_subcat);
-        return ResponseEntity.ok(DTOMapper.toProductDTOList(products));
+            @PathVariable("id_subcat") Long id_subcat,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getProductsByCategoryAndSubcategory(id_cat, id_subcat, page, size, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return ResponseEntity.ok(productDTOPage);
     }
-    //~~~~~~~~~~~~~~~
+    
+//~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product) {
         Product created = productService.createProduct(product);
