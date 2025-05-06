@@ -40,7 +40,7 @@ public class ProductController {
             @RequestParam(required = false) String occasion) {
         Page<Product> productPage = productService.getAllProducts(page, size, idCat, idSubcat, priceRange, occasion);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
-        return ResponseEntity.ok(productDTOPage);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/new")
@@ -53,7 +53,7 @@ public class ProductController {
             @RequestParam(required = false) String occasion) {
         Page<Product> productPage = productService.getNewProducts(page, size, idCat, idSubcat, priceRange, occasion);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
-        return ResponseEntity.ok(productDTOPage);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/sale")
@@ -66,7 +66,21 @@ public class ProductController {
             @RequestParam(required = false) String occasion) {
         Page<Product> productPage = productService.getSaleProducts(page, size, idCat, idSubcat, priceRange, occasion);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
-        return ResponseEntity.ok(productDTOPage);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
+    }
+
+    @GetMapping("/search/{input}")
+    public ResponseEntity<Page<ProductDTO>> getSearchProducts(
+            @PathVariable("input") String input,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) Long idCat,
+            @RequestParam(required = false) Long idSubcat,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String occasion) {
+        Page<Product> productPage = productService.getSearchProducts(input, page, size, idCat, idSubcat, priceRange, occasion);
+        Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/{id_product}")
@@ -75,7 +89,7 @@ public class ProductController {
         return ResponseEntity.ok(DTOMapper.toProductDTO(product));
     }
     
-    @GetMapping("/category/{id_cat}")
+    @GetMapping("/category/{id_cat}")   
     public ResponseEntity<Page<ProductDTO>> getProductsByCategory(
             @PathVariable("id_cat") Long id_cat,
             @RequestParam(defaultValue = "1") int page,
@@ -84,7 +98,7 @@ public class ProductController {
             @RequestParam(required = false) String occasion) {
         Page<Product> productPage = productService.getProductsByCategory(id_cat, page, size, priceRange, occasion);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
-        return ResponseEntity.ok(productDTOPage);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
 
     @GetMapping("/category/{id_cat}/subcategory/{id_subcat}")
@@ -97,7 +111,7 @@ public class ProductController {
             @RequestParam(required = false) String occasion) {
         Page<Product> productPage = productService.getProductsByCategoryAndSubcategory(id_cat, id_subcat, page, size, priceRange, occasion);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
-        return ResponseEntity.ok(productDTOPage);
+        return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
     
 //~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~

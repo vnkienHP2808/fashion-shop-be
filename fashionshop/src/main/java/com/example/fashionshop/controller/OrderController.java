@@ -1,5 +1,3 @@
-
-
 package com.example.fashionshop.controller;
 
 import com.example.fashionshop.dto.OrderDTO;
@@ -14,6 +12,7 @@ import com.example.fashionshop.util.DTOMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +32,9 @@ public class OrderController {
     @Autowired
     private ProductRepository productRepository;
 
-    
-
     @PostMapping
-    public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
-        // Lấy user từ id_user trong OrderDTO
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         User user = userService.getUserById(orderDTO.getId_user());
-
         Order order = new Order();
         order.setUser(user);
         order.setStatus(orderDTO.getStatus());
@@ -63,7 +58,7 @@ public class OrderController {
         order.setOrderDetails(details);
 
         Order savedOrder = orderService.saveOrder(order);
-        return DTOMapper.toOrderDTO(savedOrder);
+        return new ResponseEntity<>(DTOMapper.toOrderDTO(savedOrder), HttpStatus.CREATED);
     }
 
     @GetMapping("/user/{userId}")
@@ -71,20 +66,20 @@ public class OrderController {
         List<Order> orders = orderService.getOrdersByUserId(userId);
         return DTOMapper.toOrderDTOList(orders);
     }
-//~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getAllOrders(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size) {
         Page<Order> orderPage = orderService.getAllOrders(page, size);
         Page<OrderDTO> orderDTOPage = orderPage.map(DTOMapper::toOrderDTO);
-        return ResponseEntity.ok(orderDTOPage);
+        return orderPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(orderDTOPage);
     }
 
     @PutMapping("/{id}")
-    public OrderDTO updateOrderStatus(@PathVariable Integer id, @RequestBody String status) {
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Integer id, @RequestBody String status) {
         status = status.replace("\"", "");
         Order order = orderService.updateOrderStatus(id, status);
-        return DTOMapper.toOrderDTO(order);
+        return ResponseEntity.ok(DTOMapper.toOrderDTO(order));
     }
 }

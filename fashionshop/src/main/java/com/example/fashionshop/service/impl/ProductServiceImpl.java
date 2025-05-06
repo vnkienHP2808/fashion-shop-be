@@ -83,6 +83,25 @@ public class ProductServiceImpl implements ProductService {
         });
         return productPage;
     }
+    @Override
+    public Page<Product> getSearchProducts(String input, int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        if (priceRange != null && !priceRange.isEmpty()) {
+            String[] range = priceRange.split("-");
+            minPrice = Double.parseDouble(range[0]);
+            maxPrice = Double.parseDouble(range[1]);
+        }
+
+        Page<Product> productPage = productRepository.searchByInput(input, idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
+        productPage.getContent().forEach(p -> {
+            List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
+            p.setImages(images);
+        });
+        return productPage;
+    }
 
     @Override
     public Product getProductById(Long id_product) {

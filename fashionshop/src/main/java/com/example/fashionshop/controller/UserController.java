@@ -1,4 +1,3 @@
-
 package com.example.fashionshop.controller;
 
 import java.util.List;
@@ -34,22 +33,20 @@ public class UserController {
         return ResponseEntity.ok(DTOMapper.toUserDTO(user));
     }
 
-
     @PutMapping("/{id}/phones")
-    public ResponseEntity<?> updatePhones(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+    public ResponseEntity<Void> updatePhones(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
         List<String> phones = payload.get("phones");
         userService.updatePhones(id, phones);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/addresses")
-    public ResponseEntity<?> updateAddresses(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+    public ResponseEntity<Void> updateAddresses(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
         List<String> addresses = payload.get("addresses");
         userService.updateAddresses(id, addresses);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
-//~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+//~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~
     @GetMapping()
     public ResponseEntity<Page<UserDTO>> getAllUserOrByName(
         @RequestParam(required = false, defaultValue = "") String name,
@@ -57,16 +54,13 @@ public class UserController {
         @RequestParam(defaultValue = "10") int size) {
         Page<User> userPage = userService.getUsersByName(name, page, size);
         Page<UserDTO> userDTOPage = userPage.map(DTOMapper::toUserDTO);
-        return ResponseEntity.ok(userDTOPage);
+        return userPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(userDTOPage);
     }
-    
 
     @PutMapping("/{id}/status")
     public ResponseEntity<UserDTO> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         String status = payload.get("status");
-
         User updatedUser = userService.updateUserStatus(id, status);
         return ResponseEntity.ok(DTOMapper.toUserDTO(updatedUser));
     }
-
 }

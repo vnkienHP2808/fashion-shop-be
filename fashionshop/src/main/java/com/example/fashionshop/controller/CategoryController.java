@@ -1,7 +1,4 @@
-
-
 package com.example.fashionshop.controller;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +24,4 @@ public class CategoryController {
         List<Category> categories = categoryService.getAllCategories();
         return DTOMapper.toCategoryDTOList(categories);
     }
-
 }

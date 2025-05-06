@@ -1,10 +1,7 @@
-
-
 package com.example.fashionshop.controller;
 
 import com.example.fashionshop.dto.ChangePasswordRequest;
 import com.example.fashionshop.dto.LoginRequest;
-import com.example.fashionshop.dto.LoginResponseDTO;
 import com.example.fashionshop.dto.RegisterRequest;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.UserService;
@@ -25,9 +22,8 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
-        String message = userService.register(request);
-        return ResponseEntity.ok(message);
+    public String register(@RequestBody @Valid RegisterRequest request) {
+        return userService.register(request);
     }
     
     @PostMapping("/sign-in")
@@ -40,7 +36,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(loginResult);
         }
     }
-    
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {

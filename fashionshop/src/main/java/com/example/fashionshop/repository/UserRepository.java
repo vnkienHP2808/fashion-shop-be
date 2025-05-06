@@ -3,6 +3,7 @@ package com.example.fashionshop.repository;
 import com.example.fashionshop.entity.User;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u from User u where u.name like %:name%")
     Page<User> findUsersByName(
         @Param("name") String name,
-        org.springframework.data.domain.Pageable pageable
+        Pageable pageable
     );
 }
