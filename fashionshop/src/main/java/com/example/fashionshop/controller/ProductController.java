@@ -116,7 +116,7 @@ public class ProductController {
     }
     
 //~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product) {
         Product created = productService.createProduct(product);
         return new ResponseEntity<>(DTOMapper.toProductDTO(created), HttpStatus.CREATED);
