@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.fashionshop.dto.CartItemDTO;
-import com.example.fashionshop.dto.CartRequest;
+import com.example.fashionshop.dto.entity.CartItemDTO;
+import com.example.fashionshop.dto.request.CartRequest;
 import com.example.fashionshop.entity.CartItem;
 import com.example.fashionshop.service.CartService;
 import com.example.fashionshop.util.DTOMapper;

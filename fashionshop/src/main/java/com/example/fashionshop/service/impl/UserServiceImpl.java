@@ -1,7 +1,7 @@
 package com.example.fashionshop.service.impl;
 
-import com.example.fashionshop.dto.LoginRequest;
-import com.example.fashionshop.dto.RegisterRequest;
+import com.example.fashionshop.dto.request.LoginRequest;
+import com.example.fashionshop.dto.request.RegisterRequest;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.UserService;

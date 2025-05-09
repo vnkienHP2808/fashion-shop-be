@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.fashionshop.dto.UserDTO;
+import com.example.fashionshop.dto.entity.UserDTO;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.UserService;
 import com.example.fashionshop.util.DTOMapper;

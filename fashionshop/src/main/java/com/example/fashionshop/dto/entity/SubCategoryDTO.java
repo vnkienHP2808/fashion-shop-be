@@ -1,4 +1,4 @@
-package com.example.fashionshop.dto;
+package com.example.fashionshop.dto.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageProductDTO {
-    private Long idImage;
-    private String imageLink;
+public class SubCategoryDTO {
+    private Long id_subcat;
+    private String name;
 }

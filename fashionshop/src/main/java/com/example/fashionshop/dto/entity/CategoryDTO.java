@@ -1,4 +1,4 @@
-package com.example.fashionshop.dto;
+package com.example.fashionshop.dto.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

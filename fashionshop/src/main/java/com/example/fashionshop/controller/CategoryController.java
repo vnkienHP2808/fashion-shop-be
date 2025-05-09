@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.fashionshop.dto.CategoryDTO;
+import com.example.fashionshop.dto.entity.CategoryDTO;
 import com.example.fashionshop.entity.Category;
 import com.example.fashionshop.service.CategoryService;
 import com.example.fashionshop.util.DTOMapper;

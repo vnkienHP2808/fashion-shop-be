@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.example.fashionshop.dto.LoginRequest;
-import com.example.fashionshop.dto.RegisterRequest;
+import com.example.fashionshop.dto.request.LoginRequest;
+import com.example.fashionshop.dto.request.RegisterRequest;
 import com.example.fashionshop.entity.User;
 
 public interface UserService {

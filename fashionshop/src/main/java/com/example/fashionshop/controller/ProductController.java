@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.fashionshop.dto.ProductDTO;
+import com.example.fashionshop.dto.entity.ProductDTO;
 import com.example.fashionshop.entity.Product;
 import com.example.fashionshop.service.ProductService;
 import com.example.fashionshop.util.DTOMapper;

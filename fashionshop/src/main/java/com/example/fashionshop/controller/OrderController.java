@@ -1,6 +1,6 @@
 package com.example.fashionshop.controller;
 
-import com.example.fashionshop.dto.OrderDTO;
+import com.example.fashionshop.dto.entity.OrderDTO;
 import com.example.fashionshop.entity.Order;
 import com.example.fashionshop.entity.OrderDetail;
 import com.example.fashionshop.entity.Product;

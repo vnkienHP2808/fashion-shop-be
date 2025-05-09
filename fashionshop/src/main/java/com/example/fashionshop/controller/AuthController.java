@@ -1,8 +1,8 @@
 package com.example.fashionshop.controller;
 
-import com.example.fashionshop.dto.ChangePasswordRequest;
-import com.example.fashionshop.dto.LoginRequest;
-import com.example.fashionshop.dto.RegisterRequest;
+import com.example.fashionshop.dto.request.ChangePasswordRequest;
+import com.example.fashionshop.dto.request.LoginRequest;
+import com.example.fashionshop.dto.request.RegisterRequest;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.service.UserService;
 import com.example.fashionshop.util.DTOMapper;
