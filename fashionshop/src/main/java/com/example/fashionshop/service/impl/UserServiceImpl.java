@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    // private final PasswordEncoder passwordEncoder;
 
     @Override
     public String register(RegisterRequest request) {
@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                // .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
                 .status("Active")
                 .role("Customer")
                 .phones(request.getPhones())
@@ -51,7 +52,8 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            // if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            if (user.getPassword().equals(request.getPassword())) {
                 return user;
             } else {
                 return "Sai mật khẩu!";
@@ -67,9 +69,11 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             // Kiểm tra mật khẩu cũ đã mã hóa
-            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-                // Mã hóa mật khẩu mới trước khi lưu
-                user.setPassword(passwordEncoder.encode(newPassword));
+            // if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            //     // Mã hóa mật khẩu mới trước khi lưu
+            //     user.setPassword(passwordEncoder.encode(newPassword));
+            if (user.getPassword().equals(oldPassword)) {
+                user.setPassword(newPassword);
                 userRepository.save(user);
                 return true;
             }

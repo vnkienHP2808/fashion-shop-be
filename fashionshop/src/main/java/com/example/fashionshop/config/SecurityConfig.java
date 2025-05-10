@@ -7,14 +7,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.repository.UserRepository;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 @Configuration
@@ -29,6 +34,7 @@ public class SecurityConfig {
         authenticationEntryPoint.setRealmName("FashionShopRealm");
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm cấu hình CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // public các api này để hiện sp dù không đăng nhập
@@ -47,16 +53,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/change-password").hasAnyRole("Customer", "Admin")
 
                         // các api liên quan đến đơn hàng, giỏ hàng hay thông tin người dùng thì phải có role
-                        .requestMatchers(HttpMethod.GET, "/api/orders/user/{userId}").hasAnyRole("Customer", "Admin")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/user/{userId}").hasAnyRole("Customer")
                         .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("Customer", "Admin")
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}/phones").hasAnyRole("Customer", "Admin")
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}/addresses").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.GET, "/api/cart/{userId}").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.POST, "/api/cart/add").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.PUT, "/api/cart/update").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart/{userId}/remove/{productId}").hasAnyRole("Customer", "Admin")
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart/{userId}/clear").hasAnyRole("Customer", "Admin")
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("Customer")
+                        .requestMatchers(HttpMethod.GET, "/api/cart/{userId}").hasAnyRole("Customer")
+                        .requestMatchers(HttpMethod.POST, "/api/cart/add").hasAnyRole("Customer")
+                        .requestMatchers(HttpMethod.PUT, "/api/cart/update").hasAnyRole("Customer")
+                        .requestMatchers(HttpMethod.DELETE, "/api/cart/{userId}/remove/{productId}").hasAnyRole("Customer")
+                        .requestMatchers(HttpMethod.DELETE, "/api/cart/{userId}/clear").hasAnyRole("Customer")
 
                         // các api thao tác với sp hoặc đơn hàng thì phải là admin sửa đổi
                         .requestMatchers(HttpMethod.POST, "/api/products/create").hasRole("Admin")
@@ -93,6 +99,19 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Cho phép origin của React
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // Cho phép gửi credentials (như Basic Auth)
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
