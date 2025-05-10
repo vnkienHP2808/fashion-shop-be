@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String register(RegisterRequest request) {
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .status("Active")
                 .role("Customer")
                 .phones(request.getPhones())
@@ -48,7 +50,8 @@ public class UserServiceImpl implements UserService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (user.getPassword().equals(request.getPassword())) {
+
+            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return user;
             } else {
                 return "Sai mật khẩu!";
@@ -63,8 +66,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if (user.getPassword().equals(oldPassword)) {
-                user.setPassword(newPassword);
+            // Kiểm tra mật khẩu cũ đã mã hóa
+            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+                // Mã hóa mật khẩu mới trước khi lưu
+                user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
                 return true;
             }
