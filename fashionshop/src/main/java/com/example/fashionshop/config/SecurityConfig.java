@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // public các api này để hiện sp dù không đăng nhập
-                        .requestMatchers("/auth/sign-up", "/auth/sign-in").permitAll()
+                        .requestMatchers("/auth/sign-up", "/auth/sign-in", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products",
                                 "/api/products/new",

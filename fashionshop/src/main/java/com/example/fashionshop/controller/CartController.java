@@ -1,5 +1,6 @@
 package com.example.fashionshop.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,17 @@ public class CartController {
 
     @Autowired private CartService cartService;
 
+    // @GetMapping("/{userId}")
+    // public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
+    //     List<CartItem> cartItems = cartService.getCartItems(userId);
+    //     return cartItems.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(DTOMapper.toCartItemDTOList(cartItems));
+    // }
+
     @GetMapping("/{userId}")
     public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
         List<CartItem> cartItems = cartService.getCartItems(userId);
-        return cartItems.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(DTOMapper.toCartItemDTOList(cartItems));
+        List<CartItemDTO> cartItemDTOs = DTOMapper.toCartItemDTOList(cartItems);
+        return ResponseEntity.ok(cartItemDTOs != null ? cartItemDTOs : new ArrayList<>());
     }
 
     @PostMapping("/add")
