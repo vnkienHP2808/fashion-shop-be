@@ -1,5 +1,14 @@
 package com.example.fashionshop.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -9,17 +18,20 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.fashionshop.dto.entity.ProductDTO;
+import com.example.fashionshop.entity.ImageProduct;
 import com.example.fashionshop.entity.Product;
 import com.example.fashionshop.service.ProductService;
 import com.example.fashionshop.util.DTOMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -116,14 +128,82 @@ public class ProductController {
     }
     
 //~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~
-    @PostMapping("/create")
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product) {
+
+    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+    public ResponseEntity<ProductDTO> createProduct(
+            @RequestParam("product") String productJson,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
+        // đọc json của sản phẩm
+        ObjectMapper objectMapper = new ObjectMapper();
+        Product product = objectMapper.readValue(productJson, Product.class);
+
+        // xử lý việc upload ảnh
+        if (images != null && images.length > 0) {
+            String uploadDir = "src/main/resources/static/images/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            List<ImageProduct> imageEntities = Arrays.stream(images)
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        try {
+                            Path filePath = Paths.get(uploadDir + fileName);
+                            Files.write(filePath, file.getBytes());
+                            return ImageProduct.builder()
+                                    .imageLink(fileName) // chỉ lưu tên file
+                                    .build();
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to save image: " + fileName, e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            product.setImages(imageEntities);
+        }
+
         Product created = productService.createProduct(product);
         return new ResponseEntity<>(DTOMapper.toProductDTO(created), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable Long id,
+            @RequestParam("product") String productJson,
+            @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
+        // Parse product JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        Product product = objectMapper.readValue(productJson, Product.class);
+
+        // Handle image uploads
+        if (images != null && images.length > 0) {
+            String uploadDir = "src/main/resources/static/images/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            List<ImageProduct> imageEntities = Arrays.stream(images)
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                        try {
+                            Path filePath = Paths.get(uploadDir + fileName);
+                            Files.write(filePath, file.getBytes());
+                            return ImageProduct.builder()
+                                    .imageLink(fileName)
+                                    .build();
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to save image: " + fileName, e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            product.setImages(imageEntities);
+        }
+
         Product updated = productService.updateProduct(id, product);
         return ResponseEntity.ok(DTOMapper.toProductDTO(updated));
     }

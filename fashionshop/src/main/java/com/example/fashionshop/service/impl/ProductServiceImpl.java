@@ -185,6 +185,36 @@ public class ProductServiceImpl implements ProductService {
         return savedProduct;
     }
 
+    // @Override
+    // public Product updateProduct(Long id, Product productRequest) {
+    //     Product existingProduct = productRepository.findById(id)
+    //             .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+    //     existingProduct.setName_product(productRequest.getName_product());
+    //     existingProduct.setPrice(productRequest.getPrice());
+    //     existingProduct.setSale_price(productRequest.getSale_price());
+    //     existingProduct.setIs_new(productRequest.getIs_new());
+    //     existingProduct.setIs_sale(productRequest.getIs_sale());
+    //     existingProduct.setOccasion(productRequest.getOccasion());
+    //     existingProduct.setSold_quantity(productRequest.getSold_quantity());
+    //     existingProduct.setIn_stock(productRequest.getIn_stock());
+    //     existingProduct.setStatus(productRequest.getStatus());
+    //     existingProduct.setIdCat(productRequest.getIdCat());
+    //     existingProduct.setIdSubcat(productRequest.getIdSubcat());
+
+    //     if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
+    //         imageProductRepository.deleteAll(imageProductRepository.findByProduct_IdProduct(id));
+    //         List<ImageProduct> newImages = productRequest.getImages().stream()
+    //             .map(img -> ImageProduct.builder()
+    //                 .imageLink(img.getImageLink())
+    //                 .product(existingProduct)
+    //                 .build())
+    //             .collect(Collectors.toList());
+    //         existingProduct.setImages(imageProductRepository.saveAll(newImages));
+    //     }
+
+    //     return productRepository.save(existingProduct);
+    // }
     @Override
     public Product updateProduct(Long id, Product productRequest) {
         Product existingProduct = productRepository.findById(id)
@@ -202,6 +232,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setIdCat(productRequest.getIdCat());
         existingProduct.setIdSubcat(productRequest.getIdSubcat());
 
+        // Delete existing images if new images are provided
         if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
             imageProductRepository.deleteAll(imageProductRepository.findByProduct_IdProduct(id));
             List<ImageProduct> newImages = productRequest.getImages().stream()

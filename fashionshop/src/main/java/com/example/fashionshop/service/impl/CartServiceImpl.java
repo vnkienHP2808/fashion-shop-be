@@ -39,13 +39,13 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Tìm cartItem đã có trong giỏ hàng hay chưa
+        // tìm item đã có trong giỏ hàng hay chưa
         Optional<CartItem> existing = cartItemRepository.findByCart_IdCartAndProduct_IdProduct(cart.getIdCart(), productId);
 
         if (existing.isPresent()) {
             CartItem item = existing.get();
             item.setQuantity(item.getQuantity() + quantity);
-            cartItemRepository.save(item); // lưu lại cartItem
+            cartItemRepository.save(item); // lưu lại item
         } else {
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
@@ -54,7 +54,7 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.save(newItem); // lưu mới
         }
 
-        return cart; // Không cần cartRepository.save(cart)
+        return cart;
     }
 
     @Override
