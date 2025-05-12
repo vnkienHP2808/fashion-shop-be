@@ -58,8 +58,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<UserDTO> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
-        String status = payload.get("status");
+    public ResponseEntity<UserDTO> updateUserStatus(@PathVariable Long id, @RequestBody String status) {
+        status = status.replace("\"", "");
         User updatedUser = userService.updateUserStatus(id, status);
         return ResponseEntity.ok(DTOMapper.toUserDTO(updatedUser));
     }

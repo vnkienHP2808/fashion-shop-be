@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.fashionshop.entity.Product;
 import com.example.fashionshop.entity.ImageProduct;
+import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.ProductRepository;
 import com.example.fashionshop.repository.ImageProductRepository;
 import com.example.fashionshop.service.ProductService;
@@ -31,9 +32,13 @@ public class ProductServiceImpl implements ProductService {
         Double maxPrice = null;
 
         if (priceRange != null && !priceRange.isEmpty()) {
-            String[] range = priceRange.split("-");
-            minPrice = Double.parseDouble(range[0]);
-            maxPrice = Double.parseDouble(range[1]);
+            try {
+                String[] range = priceRange.split("-");
+                minPrice = Double.parseDouble(range[0]);
+                maxPrice = Double.parseDouble(range[1]);
+            } catch (NumberFormatException e) {
+                throw new ValidationException("Invalid price range format");
+            }
         }
 
         Page<Product> productPage = productRepository.findByFilters(idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
@@ -156,6 +161,8 @@ public class ProductServiceImpl implements ProductService {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Product createProduct(Product productRequest) {
+        validateProduct(productRequest);
+        
         Product savedProduct = productRepository.save(Product.builder()
             .name_product(productRequest.getName_product())
             .price(productRequest.getPrice())
@@ -185,38 +192,10 @@ public class ProductServiceImpl implements ProductService {
         return savedProduct;
     }
 
-    // @Override
-    // public Product updateProduct(Long id, Product productRequest) {
-    //     Product existingProduct = productRepository.findById(id)
-    //             .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-
-    //     existingProduct.setName_product(productRequest.getName_product());
-    //     existingProduct.setPrice(productRequest.getPrice());
-    //     existingProduct.setSale_price(productRequest.getSale_price());
-    //     existingProduct.setIs_new(productRequest.getIs_new());
-    //     existingProduct.setIs_sale(productRequest.getIs_sale());
-    //     existingProduct.setOccasion(productRequest.getOccasion());
-    //     existingProduct.setSold_quantity(productRequest.getSold_quantity());
-    //     existingProduct.setIn_stock(productRequest.getIn_stock());
-    //     existingProduct.setStatus(productRequest.getStatus());
-    //     existingProduct.setIdCat(productRequest.getIdCat());
-    //     existingProduct.setIdSubcat(productRequest.getIdSubcat());
-
-    //     if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
-    //         imageProductRepository.deleteAll(imageProductRepository.findByProduct_IdProduct(id));
-    //         List<ImageProduct> newImages = productRequest.getImages().stream()
-    //             .map(img -> ImageProduct.builder()
-    //                 .imageLink(img.getImageLink())
-    //                 .product(existingProduct)
-    //                 .build())
-    //             .collect(Collectors.toList());
-    //         existingProduct.setImages(imageProductRepository.saveAll(newImages));
-    //     }
-
-    //     return productRepository.save(existingProduct);
-    // }
     @Override
     public Product updateProduct(Long id, Product productRequest) {
+        validateProduct(productRequest);
+        
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
@@ -232,7 +211,6 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setIdCat(productRequest.getIdCat());
         existingProduct.setIdSubcat(productRequest.getIdSubcat());
 
-        // Delete existing images if new images are provided
         if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
             imageProductRepository.deleteAll(imageProductRepository.findByProduct_IdProduct(id));
             List<ImageProduct> newImages = productRequest.getImages().stream()
@@ -253,5 +231,20 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         imageProductRepository.deleteAll(imageProductRepository.findByProduct_IdProduct(id));
         productRepository.delete(product);
+    }
+
+    private void validateProduct(Product product) {
+        if (product.getPrice() < 0) {
+            throw new ValidationException("Price cannot be negative");
+        }
+        if (product.getSale_price() != null && product.getSale_price() < 0) {
+            throw new ValidationException("Sale price cannot be negative");
+        }
+        if (product.getSale_price() != null && product.getSale_price() > product.getPrice()) {
+            throw new ValidationException("Sale price cannot be greater than regular price");
+        }
+        if (product.getIn_stock() < 0) {
+            throw new ValidationException("Stock cannot be negative");
+        }
     }
 }

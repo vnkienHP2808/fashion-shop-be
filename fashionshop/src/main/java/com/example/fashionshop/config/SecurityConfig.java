@@ -34,7 +34,8 @@ public class SecurityConfig {
         authenticationEntryPoint.setRealmName("FashionShopRealm");
 
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm cấu hình CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // cấu hình cors thì fe chạy trên 5173, be chạy trên 8080 khác cổng nên phải cấu hình
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // public các api này để hiện sp dù không đăng nhập
@@ -49,7 +50,7 @@ public class SecurityConfig {
                                 "/api/categories"
                         ).permitAll()
 
-                        // đổi mật khảu thì phải đăng nhập trước -> có role
+                        // đổi mật khảu thì phải đăng nhập trước 
                         .requestMatchers(HttpMethod.POST, "/auth/change-password").hasAnyRole("Customer", "Admin")
 
                         // các api liên quan đến đơn hàng, giỏ hàng hay thông tin người dùng thì phải có role
@@ -106,10 +107,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Cho phép origin của React
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // cho phép đường dẫn của link fe
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // Cho phép gửi credentials (như Basic Auth)
+        configuration.setAllowCredentials(true); // cho phép gửi credentials (cần thiết)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

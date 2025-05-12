@@ -13,7 +13,6 @@ public interface UserService {
     Object login(LoginRequest request);
     boolean changePassword(Long userId, String oldPassword, String newPassword);
     User getUserById(Long id);
-    User updateUser(Long id, User updatedUser);
 
     // lấy danh sách người dùng để check postman
     Page<User> getUsersByName(String name, int page, int size);

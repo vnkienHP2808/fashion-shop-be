@@ -3,6 +3,8 @@ package com.example.fashionshop.service.impl;
 import com.example.fashionshop.dto.request.LoginRequest;
 import com.example.fashionshop.dto.request.RegisterRequest;
 import com.example.fashionshop.entity.User;
+import com.example.fashionshop.exception.AuthenticationException;
+import com.example.fashionshop.exception.BadRequestException;
 import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            return "Email đã tồn tại!";
+            throw new BadRequestException("Email đã tồn tại!");
         }
 
         // lưu thông tin người dùng vào cơ sở dữ liệu
@@ -56,29 +58,26 @@ public class UserServiceImpl implements UserService {
             if (user.getPassword().equals(request.getPassword())) {
                 return user;
             } else {
-                return "Sai mật khẩu!";
+                throw new AuthenticationException("Sai mật khẩu!");
             }
         } else {
-            return "Tài khoản không tồn tại!";
+            throw new AuthenticationException("Tài khoản không tồn tại!");
         }
     }
 
     @Override
     public boolean changePassword(Long userId, String oldPassword, String newPassword) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            // Kiểm tra mật khẩu cũ đã mã hóa
-            // if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-            //     // Mã hóa mật khẩu mới trước khi lưu
-            //     user.setPassword(passwordEncoder.encode(newPassword));
-            if (user.getPassword().equals(oldPassword)) {
-                user.setPassword(newPassword);
-                userRepository.save(user);
-                return true;
-            }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (user.getPassword().equals(oldPassword)) {
+            // user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return true;
         }
-        return false;
+        throw new AuthenticationException("Mật khẩu cũ không đúng!");
     }
 
     @Override
@@ -88,32 +87,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, User updatedUser) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setAddresses(updatedUser.getAddresses());
-        user.setPhones(updatedUser.getPhones());
-        return userRepository.save(user);
-    }
-
-    @Override
     public void updatePhones(Long id, List<String> phones) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         user.setPhones(phones);
         userRepository.save(user);
     }
 
     @Override
     public void updateAddresses(Long id, List<String> addresses) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         user.setAddresses(addresses);
         userRepository.save(user);
     }
 //~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public Page<User> getUsersByName(String name, int page, int size){
+    public Page<User> getUsersByName(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> userPage = userRepository.findUsersByName(name, pageable);
         return userPage;
@@ -125,11 +114,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         if ("Admin".equalsIgnoreCase(user.getRole()) && "Inactive".equalsIgnoreCase(status)) {
-            throw new IllegalArgumentException("Admin không thể bị hủy kích hoạt.");
+            throw new BadRequestException("Admin không thể bị hủy kích hoạt.");
         }
 
         user.setStatus(status);
         return userRepository.save(user);
     }
-
 }

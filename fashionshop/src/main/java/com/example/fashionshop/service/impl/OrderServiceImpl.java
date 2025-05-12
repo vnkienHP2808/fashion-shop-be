@@ -2,6 +2,7 @@ package com.example.fashionshop.service.impl;
 
 import com.example.fashionshop.entity.Order;
 import com.example.fashionshop.entity.User;
+import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.OrderRepository;
 import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.OrderService;
@@ -24,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order saveOrder(Order order) {
-        // Đảm bảo các OrderDetail đã set order trong controller nếu cần
+        validateOrder(order);
         return orderRepository.save(order);
     }
 
@@ -53,5 +54,17 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderById(id);
         order.setStatus(status);
         return orderRepository.save(order);
+    }
+
+    private void validateOrder(Order order) {
+        if (order.getUser() == null) {
+            throw new ValidationException("Order must have a user");
+        }
+        if (order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
+            throw new ValidationException("Order must have at least one order detail");
+        }
+        if (order.getGrandTotal() <= 0) {
+            throw new ValidationException("Order total must be greater than 0");
+        }
     }
 }
