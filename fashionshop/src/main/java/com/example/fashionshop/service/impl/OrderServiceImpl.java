@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -42,10 +41,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrdersByUserId(Long userId) {
+    public Page<Order> getOrdersByUserId(Long userId, int page, int size) {
         User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return orderRepository.findByUser(user); 
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Order> orderPage = orderRepository.findByUser(user, pageable);
+        return orderPage; 
     }
 
 

@@ -62,9 +62,12 @@ public class OrderController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<OrderDTO> getOrdersByUserId(@PathVariable Long userId) {
-        List<Order> orders = orderService.getOrdersByUserId(userId);
-        return DTOMapper.toOrderDTOList(orders);
+    public ResponseEntity<Page<OrderDTO>> getOrdersByUserId(@PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<Order> orderPage = orderService.getOrdersByUserId(userId, page, size);
+        Page<OrderDTO> orderDTOPage = orderPage.map(DTOMapper::toOrderDTO);
+        return orderPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(orderDTOPage);
     }
 //~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~
     @GetMapping
