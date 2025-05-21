@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Value("${image.upload-dir}")
+    private String uploadDir;
 
 //~~~~~~~~~~~~~~~~~~~~User~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -139,7 +144,6 @@ public class ProductController {
 
         // xử lý việc upload ảnh
         if (images != null && images.length > 0) {
-            String uploadDir = "src/main/resources/static/images/";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -173,19 +177,20 @@ public class ProductController {
             @PathVariable Long id,
             @RequestParam("product") String productJson,
             @RequestParam(value = "images", required = false) MultipartFile[] images) throws IOException {
-        // Parse product JSON
+        
         ObjectMapper objectMapper = new ObjectMapper();
         Product product = objectMapper.readValue(productJson, Product.class);
 
-        // Handle image uploads
+        // Lấy danh sách ảnh hiện tại từ product (trong JSON)
+        List<ImageProduct> existingImages = product.getImages() != null ? product.getImages() : new ArrayList<>();
+
         if (images != null && images.length > 0) {
-            String uploadDir = "src/main/resources/static/images/";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            List<ImageProduct> imageEntities = Arrays.stream(images)
+            List<ImageProduct> newImageEntities = Arrays.stream(images)
                     .filter(file -> !file.isEmpty())
                     .map(file -> {
                         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -201,7 +206,9 @@ public class ProductController {
                     })
                     .collect(Collectors.toList());
 
-            product.setImages(imageEntities);
+            // kết hợp ảnh cũ và mới
+            existingImages.addAll(newImageEntities);
+            product.setImages(existingImages);
         }
 
         Product updated = productService.updateProduct(id, product);
