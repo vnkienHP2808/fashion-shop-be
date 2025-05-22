@@ -13,20 +13,35 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    Page<Order> findByUser(User user, Pageable pageable);
 
     @Query("SELECT o FROM Order o " +
-                     "WHERE (:minPrice IS NULL OR o.grandTotal >= :minPrice) " +
-                     "AND (:maxPrice IS NULL OR o.grandTotal <= :maxPrice) " +
-                     "AND (:status IS NULL OR o.status = :status) " + 
-                     "AND (:startDate IS NULL OR o.orderDate >= :startDate)" +
-                     "AND (:endDate IS NULL OR o.orderDate <= :endDate)")
-                     
-       Page<Order> findByFilters(
-                     @Param("minPrice") Integer minPrice,
-                     @Param("maxPrice") Integer maxPrice,
-                     @Param("status") String status,
-                     @Param("startDate") LocalDateTime startDate,
-                     @Param("endDate") LocalDateTime endDate,
-                     Pageable pageable);
+            "WHERE (:minPrice IS NULL OR o.grandTotal >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR o.grandTotal <= :maxPrice) " +
+            "AND (:status IS NULL OR o.status = :status) " +
+            "AND (:startDate IS NULL OR o.orderDate >= :startDate)" +
+            "AND (:endDate IS NULL OR o.orderDate <= :endDate)")
+
+    Page<Order> findByFilters(
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            @Param("status") String status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
+
+    @Query("SELECT o FROM Order o " +
+            "WHERE (:minPrice IS NULL OR o.grandTotal >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR o.grandTotal <= :maxPrice) " +
+            "AND (:status IS NULL OR o.status = :status) " +
+            "AND (:startDate IS NULL OR o.orderDate >= :startDate)" +
+            "AND (:endDate IS NULL OR o.orderDate <= :endDate)")
+
+    Page<Order> findByFiltersMyOrder(
+            User user,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            @Param("status") String status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);           
 }

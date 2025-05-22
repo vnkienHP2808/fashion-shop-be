@@ -56,11 +56,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> getOrdersByUserId(Long userId, int page, int size) {
+    public Page<Order> getOrdersByUserId(Long userId, int page, int size, String grandTotalRange, String status, LocalDateTime startDate, LocalDateTime endDate) {
         User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Order> orderPage = orderRepository.findByUser(user, pageable);
+
+        Integer minPrice = null;
+        Integer maxPrice = null;
+
+        if (grandTotalRange != null && !grandTotalRange.isEmpty()) {
+            try {
+                String[] range = grandTotalRange.split("-");
+                minPrice = Integer.parseInt(range[0]);
+                maxPrice = Integer.parseInt(range[1]);
+            } catch (NumberFormatException e) {
+                throw new ValidationException("Invalid price range format");
+            }
+        }
+        Page<Order> orderPage = orderRepository.findByFiltersMyOrder(user, minPrice, maxPrice, status, startDate, endDate, pageable);
         return orderPage; 
     }
 

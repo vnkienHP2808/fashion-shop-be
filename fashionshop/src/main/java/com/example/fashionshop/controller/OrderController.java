@@ -67,8 +67,27 @@ public class OrderController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<OrderDTO>> getOrdersByUserId(@PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<Order> orderPage = orderService.getOrdersByUserId(userId, page, size);
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String grandTotalRange,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate){
+        
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+        try {
+            if (startDate != null && !startDate.isEmpty()) {
+                LocalDate localStartDate = LocalDate.parse(startDate);
+                startDateTime = localStartDate.atStartOfDay();
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                LocalDate localEndDate = LocalDate.parse(endDate);
+                endDateTime = localEndDate.atTime(23, 59, 59);
+            }
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        Page<Order> orderPage = orderService.getOrdersByUserId(userId, page, size, grandTotalRange, status, startDateTime, endDateTime);
         Page<OrderDTO> orderDTOPage = orderPage.map(DTOMapper::toOrderDTO);
         return orderPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(orderDTOPage);
     }
