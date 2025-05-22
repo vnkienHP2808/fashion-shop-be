@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -73,8 +76,28 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getAllOrders(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<Order> orderPage = orderService.getAllOrders(page, size);
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String grandTotalRange,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate){
+        
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+        try {
+            if (startDate != null && !startDate.isEmpty()) {
+                LocalDate localStartDate = LocalDate.parse(startDate);
+                startDateTime = localStartDate.atStartOfDay();
+            }
+            if (endDate != null && !endDate.isEmpty()) {
+                LocalDate localEndDate = LocalDate.parse(endDate);
+                endDateTime = localEndDate.atTime(23, 59, 59);
+            }
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<Order> orderPage = orderService.getAllOrders(page, size, grandTotalRange, status, startDateTime, endDateTime);
         Page<OrderDTO> orderDTOPage = orderPage.map(DTOMapper::toOrderDTO);
         return orderPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(orderDTOPage);
     }

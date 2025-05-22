@@ -6,6 +6,9 @@ import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.OrderRepository;
 import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.OrderService;
+
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,9 +32,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> getAllOrders(int page, int size) {
+    public Page<Order> getAllOrders(int page, int size, String grandTotalRange, String status, LocalDateTime startDate, LocalDateTime endDate) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Order> orderPage = orderRepository.findAll(pageable);
+        Integer minPrice = null;
+        Integer maxPrice = null;
+
+        if (grandTotalRange != null && !grandTotalRange.isEmpty()) {
+            try {
+                String[] range = grandTotalRange.split("-");
+                minPrice = Integer.parseInt(range[0]);
+                maxPrice = Integer.parseInt(range[1]);
+            } catch (NumberFormatException e) {
+                throw new ValidationException("Invalid price range format");
+            }
+        }
+        Page<Order> orderPage = orderRepository.findByFilters(minPrice, maxPrice, status, startDate, endDate, pageable);
         return orderPage;
     }
 
