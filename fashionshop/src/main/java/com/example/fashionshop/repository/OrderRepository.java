@@ -1,7 +1,6 @@
 package com.example.fashionshop.repository;
 
 import com.example.fashionshop.entity.Order;
-import com.example.fashionshop.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -30,14 +29,15 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             Pageable pageable);
 
     @Query("SELECT o FROM Order o " +
-            "WHERE (:minPrice IS NULL OR o.grandTotal >= :minPrice) " +
+            "WHERE o.user.id_user = :userId " +
+            "AND (:minPrice IS NULL OR o.grandTotal >= :minPrice) " +
             "AND (:maxPrice IS NULL OR o.grandTotal <= :maxPrice) " +
             "AND (:status IS NULL OR o.status = :status) " +
             "AND (:startDate IS NULL OR o.orderDate >= :startDate)" +
             "AND (:endDate IS NULL OR o.orderDate <= :endDate)")
 
     Page<Order> findByFiltersMyOrder(
-            User user,
+            @Param("userId") Long userId,
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice,
             @Param("status") String status,

@@ -1,10 +1,8 @@
 package com.example.fashionshop.service.impl;
 
 import com.example.fashionshop.entity.Order;
-import com.example.fashionshop.entity.User;
 import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.OrderRepository;
-import com.example.fashionshop.repository.UserRepository;
 import com.example.fashionshop.service.OrderService;
 
 import java.time.LocalDateTime;
@@ -22,9 +20,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Override
     public Order saveOrder(Order order) {
@@ -58,8 +53,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<Order> getOrdersByUserId(Long userId, int page, int size, String grandTotalRange, String status, LocalDateTime startDate, LocalDateTime endDate) {
-        User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "orderDate"));
 
         Integer minPrice = null;
@@ -74,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new ValidationException("Invalid price range format");
             }
         }
-        Page<Order> orderPage = orderRepository.findByFiltersMyOrder(user, minPrice, maxPrice, status, startDate, endDate, pageable);
+        Page<Order> orderPage = orderRepository.findByFiltersMyOrder(userId, minPrice, maxPrice, status, startDate, endDate, pageable);
         return orderPage; 
     }
 

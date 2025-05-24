@@ -38,11 +38,6 @@ public class SecurityConfig {
                 // cấu hình cors thì fe chạy trên 5173, be chạy trên 8080 khác cổng nên phải cấu hình
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html")
-                        .permitAll()
                         // public các api này để hiện sp dù không đăng nhập
                         .requestMatchers("/auth/sign-up", "/auth/sign-in", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
@@ -59,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/change-password").hasAnyRole("Customer", "Admin")
 
                         // các api liên quan đến đơn hàng, giỏ hàng hay thông tin người dùng thì phải có role
+                        .requestMatchers(HttpMethod.PUT, "/api/products/update-quantity-and-sold").hasAnyRole("Customer")
                         .requestMatchers(HttpMethod.GET, "/api/orders/user/{userId}").hasAnyRole("Customer")
                         .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("Customer", "Admin")
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}/phones").hasAnyRole("Customer", "Admin")

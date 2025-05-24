@@ -21,12 +21,6 @@ public class CartController {
 
     @Autowired private CartService cartService;
 
-    // @GetMapping("/{userId}")
-    // public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
-    //     List<CartItem> cartItems = cartService.getCartItems(userId);
-    //     return cartItems.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(DTOMapper.toCartItemDTOList(cartItems));
-    // }
-
     @GetMapping("/{userId}")
     public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
         List<CartItem> cartItems = cartService.getCartItems(userId);

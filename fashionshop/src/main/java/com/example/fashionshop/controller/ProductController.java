@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.fashionshop.dto.entity.ProductDTO;
+import com.example.fashionshop.dto.entity.ProductQuantity;
 import com.example.fashionshop.entity.ImageProduct;
 import com.example.fashionshop.entity.Product;
 import com.example.fashionshop.service.ProductService;
@@ -33,6 +34,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -132,6 +135,12 @@ public class ProductController {
         return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
     
+    @PutMapping("/update-quantity-and-sold")
+    public ResponseEntity<?> updateProductQuantityAndSold(@RequestBody List<ProductQuantity> updateProductQuantity){
+        productService.updateProductQuantity(updateProductQuantity);
+        return ResponseEntity.ok().build();
+    }
+
 //~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})

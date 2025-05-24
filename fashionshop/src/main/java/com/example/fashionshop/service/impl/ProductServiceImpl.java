@@ -8,8 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.fashionshop.entity.Product;
+import com.example.fashionshop.dto.entity.ProductQuantity;
 import com.example.fashionshop.entity.ImageProduct;
 import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.ProductRepository;
@@ -157,6 +159,26 @@ public class ProductServiceImpl implements ProductService {
             p.setImages(images);
         });
         return productPage;
+    }
+
+    @Override
+    @Transactional
+    public void updateProductQuantity(List<ProductQuantity> updates){
+        for(ProductQuantity update : updates){
+            Product product = productRepository.findById(update.getIdProduct())
+                                .orElseThrow(() -> new RuntimeException("Product not found!"));
+            
+            int newQuantity = product.getIn_stock() - update.getQuantity();
+            int newSold = product.getSold_quantity() + update.getQuantity();
+            
+            if (newQuantity < 0) {
+                throw new RuntimeException("Can't update!");
+            }
+            product.setIn_stock(newQuantity);
+            product.setSold_quantity(newSold);
+
+            productRepository.save(product);
+        }
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override

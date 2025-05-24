@@ -1,8 +1,11 @@
 package com.example.fashionshop.service;
 
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
+import com.example.fashionshop.dto.entity.ProductQuantity;
 import com.example.fashionshop.entity.Product;
 
 public interface ProductService {
@@ -19,5 +22,6 @@ public interface ProductService {
 //~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~
     Product createProduct(Product product);
     Product updateProduct(Long id, Product product);
+    void updateProductQuantity(List<ProductQuantity> updates);
     void deleteProduct(Long id);
 }
