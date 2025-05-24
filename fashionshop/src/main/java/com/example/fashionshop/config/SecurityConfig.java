@@ -38,6 +38,11 @@ public class SecurityConfig {
                 // cấu hình cors thì fe chạy trên 5173, be chạy trên 8080 khác cổng nên phải cấu hình
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
+                        .permitAll()
                         // public các api này để hiện sp dù không đăng nhập
                         .requestMatchers("/auth/sign-up", "/auth/sign-in", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET,

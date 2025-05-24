@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -33,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<Order> getAllOrders(int page, int size, String grandTotalRange, String status, LocalDateTime startDate, LocalDateTime endDate) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "orderDate"));
         Integer minPrice = null;
         Integer maxPrice = null;
 
@@ -59,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> getOrdersByUserId(Long userId, int page, int size, String grandTotalRange, String status, LocalDateTime startDate, LocalDateTime endDate) {
         User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "orderDate"));
 
         Integer minPrice = null;
         Integer maxPrice = null;

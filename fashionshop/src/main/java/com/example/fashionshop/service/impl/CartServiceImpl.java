@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.fashionshop.entity.Cart;
 import com.example.fashionshop.entity.CartItem;
@@ -75,6 +76,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void clearCart(Long userId) {
         Cart cart = getOrCreateCart(userId);
         cartItemRepository.deleteByCart_IdCart(cart.getIdCart());
