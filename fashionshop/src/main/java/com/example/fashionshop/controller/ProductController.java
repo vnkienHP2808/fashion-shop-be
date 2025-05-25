@@ -90,16 +90,16 @@ public class ProductController {
         return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }
 
-    @GetMapping("/search/{input}")
+    @GetMapping("/search")
     public ResponseEntity<Page<ProductDTO>> getSearchProducts(
-            @PathVariable("input") String input,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) Long idCat,
             @RequestParam(required = false) Long idSubcat,
             @RequestParam(required = false) String priceRange,
-            @RequestParam(required = false) String occasion) {
-        Page<Product> productPage = productService.getSearchProducts(input, page, size, idCat, idSubcat, priceRange, occasion);
+            @RequestParam(required = false) String occasion, 
+            @RequestParam(required = true) String nameProduct){
+        Page<Product> productPage = productService.getSearchProducts(page, size, idCat, idSubcat, priceRange, occasion, nameProduct);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
         return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
     }

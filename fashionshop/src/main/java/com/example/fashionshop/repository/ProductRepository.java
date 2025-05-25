@@ -79,18 +79,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                      @Param("occasion") String occasion,
                      Pageable pageable);
 
-       @Query("SELECT p FROM Product p WHERE p.name_product like %:input% " +
+       @Query("SELECT p FROM Product p WHERE p.name_product like %:nameProduct% " +
                      "AND (:idCat IS NULL OR p.idCat = :idCat) " +
                      "AND (:idSubcat IS NULL OR p.idSubcat = :idSubcat) " +
                      "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
                      "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
                      "AND (:occasion IS NULL OR p.occasion = :occasion)")
        Page<Product> searchByInput(
-                     @Param("input") String input,
                      @Param("idCat") Long idCat,
                      @Param("idSubcat") Long idSubcat,
                      @Param("minPrice") Double minPrice,
                      @Param("maxPrice") Double maxPrice,
                      @Param("occasion") String occasion,
+                     @Param("nameProduct") String nameProduct,
                      Pageable pageable);
 }

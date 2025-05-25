@@ -21,8 +21,6 @@ public class DTOMapper {
                 .role(user.getRole())
                 .phones(user.getPhones())
                 .addresses(user.getAddresses())
-                .orders(user.getOrders() != null ? toOrderDTOList(user.getOrders()) : null)
-                .cart(user.getCart() != null ? toCartDTO(user.getCart()) : null)
                 .build();
     }
 
@@ -183,8 +181,6 @@ public class DTOMapper {
                 .status(user.getStatus())
                 .phones(user.getPhones())
                 .addresses(user.getAddresses())
-                .orders(user.getOrders() != null ? toOrderDTOList(user.getOrders()) : null)
-                .cart(user.getCart() != null ? toCartDTO(user.getCart()) : null)
                 .build();
     }
     

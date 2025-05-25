@@ -91,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
         return productPage;
     }
     @Override
-    public Page<Product> getSearchProducts(String input, int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion) {
+    public Page<Product> getSearchProducts(int page, int size, Long idCat, Long idSubcat, String priceRange, String occasion, String nameProduct) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Double minPrice = null;
         Double maxPrice = null;
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
             maxPrice = Double.parseDouble(range[1]);
         }
 
-        Page<Product> productPage = productRepository.searchByInput(input, idCat, idSubcat, minPrice, maxPrice, occasion, pageable);
+        Page<Product> productPage = productRepository.searchByInput(idCat, idSubcat, minPrice, maxPrice, occasion, nameProduct, pageable);
         productPage.getContent().forEach(p -> {
             List<ImageProduct> images = imageProductRepository.findByProduct_IdProduct(p.getIdProduct());
             p.setImages(images);
