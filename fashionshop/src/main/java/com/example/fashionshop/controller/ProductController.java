@@ -98,7 +98,7 @@ public class ProductController {
             @RequestParam(required = false) Long idSubcat,
             @RequestParam(required = false) String priceRange,
             @RequestParam(required = false) String occasion, 
-            @RequestParam(required = true) String nameProduct){
+            @RequestParam(required = false) String nameProduct){
         Page<Product> productPage = productService.getSearchProducts(page, size, idCat, idSubcat, priceRange, occasion, nameProduct);
         Page<ProductDTO> productDTOPage = productPage.map(DTOMapper::toProductDTO);
         return productPage.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(productDTOPage);
