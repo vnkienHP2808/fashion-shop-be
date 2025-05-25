@@ -55,6 +55,7 @@ public class OrderController {
             detail.setQuantity(detailDTO.getQuantity());
             detail.setTotalAmount(detailDTO.getTotalAmount());
             detail.setOrder(order);
+            detail.setSize(detailDTO.getSize());
             return detail;
         }).toList();
 

@@ -106,6 +106,7 @@ public class DTOMapper {
                 .idCart(cartItem.getCart() != null ? cartItem.getCart().getIdCart() : null)
                 .product(toProductDTO(cartItem.getProduct()))
                 .quantity(cartItem.getQuantity())
+                .size(cartItem.getSize())
                 .build();
     }
 
@@ -140,6 +141,7 @@ public class DTOMapper {
                 .orderId(orderDetail.getOrder() != null ? orderDetail.getOrder().getIdOrder() : null)
                 .product(toProductDTO(orderDetail.getProduct()))
                 .quantity(orderDetail.getQuantity())
+                .size(orderDetail.getSize())
                 .totalAmount(orderDetail.getTotalAmount())
                 .build();
     }

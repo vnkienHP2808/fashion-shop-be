@@ -7,4 +7,5 @@ public class CartRequest {
     private Long id_user;
     private Long productId;
     private Integer quantity;
+    private String size;
 }

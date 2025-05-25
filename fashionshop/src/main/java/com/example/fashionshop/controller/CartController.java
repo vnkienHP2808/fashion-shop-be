@@ -30,19 +30,19 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addItem(@RequestBody CartRequest request) {
-        cartService.addItemToCart(request.getId_user(), request.getProductId(), request.getQuantity());
+        cartService.addItemToCart(request.getId_user(), request.getProductId(), request.getQuantity(), request.getSize());
         return new ResponseEntity<>("Added to cart", HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateQuantity(@RequestBody CartRequest request) {
-        cartService.updateItemQuantity(request.getId_user(), request.getProductId(), request.getQuantity());
+        cartService.updateItemQuantity(request.getId_user(), request.getProductId(), request.getQuantity(), request.getSize());
         return ResponseEntity.ok("Quantity updated");
     }
 
-    @DeleteMapping("/{userId}/remove/{productId}")
-    public ResponseEntity<String> removeItem(@PathVariable Long userId, @PathVariable Long productId) {
-        cartService.removeItem(userId, productId);
+    @DeleteMapping("/{userId}/remove/{productId}/{size}")
+    public ResponseEntity<String> removeItem(@PathVariable Long userId, @PathVariable Long productId, @PathVariable String size) {
+        cartService.removeItem(userId, productId, size);
         return ResponseEntity.ok("Item removed");
     }
 

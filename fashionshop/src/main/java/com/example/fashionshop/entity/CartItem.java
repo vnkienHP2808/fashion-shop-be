@@ -26,5 +26,6 @@ public class CartItem {
     @JoinColumn(name = "id_product", nullable = false)
     private Product product;
 
+    private String size;
     private Integer quantity;
 }

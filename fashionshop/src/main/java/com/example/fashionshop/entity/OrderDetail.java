@@ -25,6 +25,6 @@ public class OrderDetail {
 
 
     private Integer quantity;
-
+    private String size;
     private Integer totalAmount;
 }

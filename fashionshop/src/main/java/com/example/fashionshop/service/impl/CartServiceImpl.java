@@ -35,23 +35,25 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart addItemToCart(Long userId, Long productId, int quantity) {
+    public Cart addItemToCart(Long userId, Long productId, int quantity, String size) {
         Cart cart = getOrCreateCart(userId);
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new RuntimeException("Product not found"));
 
         // tìm item đã có trong giỏ hàng hay chưa
-        Optional<CartItem> existing = cartItemRepository.findByCart_IdCartAndProduct_IdProduct(cart.getIdCart(), productId);
+        Optional<CartItem> existing = cartItemRepository.findByCart_IdCartAndProduct_IdProductAndSize(cart.getIdCart(), productId, size);
 
         if (existing.isPresent()) {
             CartItem item = existing.get();
             item.setQuantity(item.getQuantity() + quantity);
+            item.setSize(size);
             cartItemRepository.save(item); // lưu lại item
         } else {
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
             newItem.setProduct(product);
             newItem.setQuantity(quantity);
+            newItem.setSize(size);
             cartItemRepository.save(newItem); // lưu mới
         }
 
@@ -59,9 +61,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateItemQuantity(Long userId, Long productId, int quantity) {
+    public void updateItemQuantity(Long userId, Long productId, int quantity, String size) {
         Cart cart = getOrCreateCart(userId);
-        cartItemRepository.findByCart_IdCartAndProduct_IdProduct(cart.getIdCart(), productId)
+        cartItemRepository.findByCart_IdCartAndProduct_IdProductAndSize(cart.getIdCart(), productId, size)
             .ifPresent(item -> {
                 item.setQuantity(quantity);
                 cartItemRepository.save(item);
@@ -69,9 +71,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeItem(Long userId, Long productId) {
+    public void removeItem(Long userId, Long productId, String size) {
         Cart cart = getOrCreateCart(userId);
-        cartItemRepository.findByCart_IdCartAndProduct_IdProduct(cart.getIdCart(), productId)
+        cartItemRepository.findByCart_IdCartAndProduct_IdProductAndSize(cart.getIdCart(), productId, size)
             .ifPresent(cartItemRepository::delete);
     }
 
