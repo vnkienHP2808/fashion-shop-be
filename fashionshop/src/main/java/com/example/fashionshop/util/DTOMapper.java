@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class DTOMapper {
 
-    // User Mapper
+    // User
     public static UserDTO toUserDTO(User user) {
         if (user == null) return null;
 
@@ -24,7 +24,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // Cart Mapper
+    // Cart
     public static CartDTO toCartDTO(Cart cart) {
         if (cart == null) return null;
 
@@ -35,7 +35,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // Category Mapper
+    // Category
     public static CategoryDTO toCategoryDTO(Category category) {
         if (category == null) return null;
 
@@ -52,7 +52,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // SubCategory Mapper
+    // SubCategory
     public static SubCategoryDTO toSubCategoryDTO(SubCategory subCategory) {
         if (subCategory == null) return null;
 
@@ -62,7 +62,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // Product Mapper
+    // Product
     public static ProductDTO toProductDTO(Product product) {
         if (product == null) return null;
 
@@ -87,7 +87,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // ImageProduct Mapper
+    // ImageProduct
     public static ImageProductDTO toImageProductDTO(ImageProduct imageProduct) {
         if (imageProduct == null) return null;
 
@@ -97,7 +97,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // CartItem Mapper
+    // CartItem
     public static CartItemDTO toCartItemDTO(CartItem cartItem) {
         if (cartItem == null) return null;
 
@@ -109,7 +109,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // Order Mapper
+    // Order
     public static OrderDTO toOrderDTO(Order order) {
         if (order == null) return null;
 
@@ -131,7 +131,7 @@ public class DTOMapper {
                 .build();
     }
 
-    // OrderDetail Mapper
+    // OrderDetail
     public static OrderDetailDTO toOrderDetailDTO(OrderDetail orderDetail) {
         if (orderDetail == null) return null;
 
@@ -169,7 +169,7 @@ public class DTOMapper {
         return orders.stream().map(DTOMapper::toOrderDTO).collect(Collectors.toList());
     }
 
-    // Login Response Mapper
+    // Login Response
     public static LoginResponseDTO toLoginResponseDTO(User user) {
         if (user == null) return null;
     
