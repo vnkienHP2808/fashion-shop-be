@@ -10,7 +10,6 @@ import com.example.fashionshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    // private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String register(RegisterRequest request) {
@@ -35,8 +34,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                // .password(passwordEncoder.encode(request.getPassword()))
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .status("Active")
                 .role("Customer")
                 .phones(request.getPhones())
@@ -48,21 +46,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object login(LoginRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+    public User login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new AuthenticationException("Tài khoản không tồn tại!"));
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            if (user.getPassword().equals(request.getPassword())) {
-                return user;
-            } else {
-                throw new AuthenticationException("Sai mật khẩu!");
-            }
-        } else {
-            throw new AuthenticationException("Tài khoản không tồn tại!");
-        }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new AuthenticationException("Sai mật khẩu!");
+    }
+    return user;
     }
 
     @Override
@@ -71,9 +62,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         // if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-        if (user.getPassword().equals(oldPassword)) {
-            // user.setPassword(passwordEncoder.encode(newPassword));
-            user.setPassword(newPassword);
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             return true;
         }

@@ -7,9 +7,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
@@ -19,14 +19,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.example.fashionshop.entity.User;
 import com.example.fashionshop.repository.UserRepository;
 
+import lombok.AllArgsConstructor;
+
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private static final Logger logger = Logger.getLogger(SecurityConfig.class.getName());
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -78,7 +82,7 @@ public class SecurityConfig {
 
 
                         .anyRequest().authenticated())
-                .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint));
+               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -102,8 +106,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
