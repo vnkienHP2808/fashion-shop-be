@@ -39,8 +39,8 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         User user = userService.login(request);
         
-        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getRole());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail(), user.getRole());
+        String accessToken = jwtUtil.generateAccessToken(user.getId_user(), user.getRole());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId_user(), user.getRole());
 
         return ResponseEntity.ok(new TokenResponse(
             accessToken,
@@ -57,11 +57,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token không hợp lệ");
         }
 
-        String email = jwtUtil.extractEmail(refreshToken);
+        Long userId = jwtUtil.extractUserId(refreshToken);
         String role  = jwtUtil.extractRole(refreshToken);
 
-        String newAccessToken  = jwtUtil.generateAccessToken(email, role);
-        String newRefreshToken = jwtUtil.generateRefreshToken(email, role);
+        String newAccessToken  = jwtUtil.generateAccessToken(userId, role);
+        String newRefreshToken = jwtUtil.generateRefreshToken(userId, role);
 
         return ResponseEntity.ok(Map.of(
                 "accessToken", newAccessToken,

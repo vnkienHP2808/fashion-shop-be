@@ -31,9 +31,9 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String buildToken(String email, String role, String type, long expiration){
+    private String buildToken(Long userId, String role, String type, long expiration){
         return Jwts.builder()
-                    .subject(email)
+                    .subject(String.valueOf(userId))
                     .claim("role", role)
                     .claim("type", type)
                     .issuedAt(new Date())
@@ -42,12 +42,12 @@ public class JwtUtil {
                     .compact();
     }
 
-    public String generateAccessToken(String email, String role){
-        return buildToken(email, role, "access", accessExpiration);
+    public String generateAccessToken(Long userId, String role){
+        return buildToken(userId, role, "access", accessExpiration);
     }
 
-    public String generateRefreshToken(String email, String role){
-        return buildToken(email, role, "refresh", refreshExpiration);
+    public String generateRefreshToken(Long userId, String role){
+        return buildToken(userId, role, "refresh", refreshExpiration);
     }
 
     private Claims getClaims(String token) {
@@ -58,8 +58,8 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public String extractEmail(String token) {
-        return getClaims(token).getSubject();
+    public Long extractUserId(String token) {
+        return Long.parseLong(getClaims(token).getSubject());
     }
 
     public String extractRole(String token) {
