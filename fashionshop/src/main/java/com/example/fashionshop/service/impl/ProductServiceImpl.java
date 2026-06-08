@@ -182,6 +182,7 @@ public class ProductServiceImpl implements ProductService {
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
+    @Transactional
     public Product createProduct(Product productRequest) {
         validateProduct(productRequest);
         
@@ -215,6 +216,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, Product productRequest) {
         validateProduct(productRequest);
         
@@ -248,6 +250,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));

@@ -5,6 +5,8 @@ import com.example.fashionshop.exception.ValidationException;
 import com.example.fashionshop.repository.OrderRepository;
 import com.example.fashionshop.service.OrderService;
 
+import jakarta.transaction.Transactional;
+
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Override
+    @Transactional
     public Order saveOrder(Order order) {
         validateOrder(order);
         return orderRepository.save(order);

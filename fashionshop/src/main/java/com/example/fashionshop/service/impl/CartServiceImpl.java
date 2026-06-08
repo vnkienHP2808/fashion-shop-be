@@ -24,6 +24,7 @@ public class CartServiceImpl implements CartService {
     @Autowired private UserRepository userRepository;
 
     @Override
+    @Transactional
     public Cart getOrCreateCart(Long userId) {
         return cartRepository.findByUserId(userId).orElseGet(() -> {
             User user = userRepository.findById(userId)
@@ -35,6 +36,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public Cart addItemToCart(Long userId, Long productId, int quantity, String size) {
         Cart cart = getOrCreateCart(userId);
         Product product = productRepository.findById(productId)
@@ -61,6 +63,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void updateItemQuantity(Long userId, Long productId, int quantity, String size) {
         Cart cart = getOrCreateCart(userId);
         cartItemRepository.findByCart_IdCartAndProduct_IdProductAndSize(cart.getIdCart(), productId, size)
