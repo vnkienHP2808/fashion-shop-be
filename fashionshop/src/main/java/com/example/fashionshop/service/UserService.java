@@ -10,7 +10,7 @@ import com.example.fashionshop.entity.User;
 
 public interface UserService {
     String register(RegisterRequest request);
-    Object login(LoginRequest request);
+    User login(LoginRequest request);
     boolean changePassword(Long userId, String oldPassword, String newPassword);
     User getUserById(Long id);
 
